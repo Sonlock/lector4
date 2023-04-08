@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lector de códigos de barras y QR</title>
+  <script src="https://serratus.github.io/quaggaJS/dist/quagga.min.js"></script>
+</head>
+<body>
+  <h1>Lector de códigos de barras y QR</h1>
+  <div id="resultado"></div>
+  <div id="escaner"></div>
+  
+  <script>
+    // Configuración del lector
+    const config = {
+      inputStream: {
+        name: "Camara",
+        type: "LiveStream",
+        target: document.querySelector("#escaner"),
+        constraints: {
+          width: 640,
+          height: 480,
+          facingMode: "environment" // Puedes cambiar a "user" si deseas la cámara frontal
+        },
+      },
+      decoder: {
+        readers: ["ean_reader", "code_128_reader", "code_39_reader", "codabar_reader", "upc_reader", "qr_reader"]
+      },
+      locator: {
+        patchSize: "medium",
+        halfSample: true
+      },
+      numOfWorkers: 4,
+      locate: true,
+      frequency: 10
+    };
+
+    // Función para manejar los resultados del escaneo
+    function resultadoEscaneo(resultado) {
+      console.log("Resultado del escaneo:", resultado.codeResult.code);
+      document.querySelector("#resultado").innerHTML = `Resultado del escaneo: ${resultado.codeResult.code}`;
+    }
+
+    // Inicializar el lector
+    Quagga.init(config, function(err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      Quagga.start();
+    });
+
+    // Registrar un escuchador de eventos para manejar los resultados del escaneo
+    Quagga.onDetected(resultadoEscaneo);
+  </script>
+</body>
+</html>
